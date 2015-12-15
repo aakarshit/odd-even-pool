@@ -1,0 +1,129 @@
+<md-whiteframe class="md-whiteframe-15dp">
+
+	
+		<md-toolbar md-scroll-shrink>
+	    <div class="md-toolbar-tools">
+
+	    	<!-- Title -->
+	    	<h2>
+		    	<span>OddEvenPool.com</span>
+		    </h2>
+
+	    	<span flex></span>
+
+	    	<!-- Show Less -->
+	    	<md-button ng-show="NewUserController.expanded" ng-click="NewUserController.expanded = false" class="md-icon-button" aria-label="Less">
+		    	<md-tooltip md-direction="bottom">
+	          Show Less
+	        </md-tooltip>
+          <md-icon md-svg-icon="static/icons/ic_expand_less_white_24px.svg"></md-icon>
+        </md-button>
+
+        <!-- Show More -->
+        <md-button ng-hide="NewUserController.expanded" ng-click="NewUserController.expanded = true" class="md-icon-button" aria-label="More">
+        	<md-tooltip md-direction="bottom">
+	          Show More
+	        </md-tooltip>
+          <md-icon md-svg-icon="static/icons/ic_expand_more_white_24px.svg"></md-icon>
+        </md-button>
+	    </div>
+	  </md-toolbar>
+
+	  
+
+		<form novalidate ng-submit="NewUserController.AddNewUser()" name="newUserForm">
+			<md-content layout-padding ng-show="NewUserController.expanded">
+
+				<div layout-gt-sm="row">
+					<md-content flex>
+					<p>Wondering how to get to office during the OddEven system? Looking for a neighbor with an odd or even numbered car to pool with? Just fill out this form and we'll match you with other folks who are looking out.</p>
+				</md-content>
+				</div>
+
+				<!-- Mobile/Email -->
+				<div layout-gt-sm="row">
+					<md-input-container class="md-block" flex-gt-sm>
+						<label>Mobile number and/or Email address</label>
+						<input ng-model="NewUserController.user.mobileOrEmail" type="text" required/>
+					</md-input-container>
+				</div>
+
+				<!-- Car Number Type -->
+				<div layout-gt-sm="row">
+					<md-input-container class="md-block" flex-gt-sm>
+						<label>Car Number Type</label>
+						<md-select ng-model="NewUserController.user.carNumberType">
+							<md-option value="even">Even</md-option>
+							<md-option value="odd">Odd</md-option>
+						</md-select>
+					</md-input-container>
+				</div>
+
+				<!-- Home Address -->
+				<div layout-gt-sm="row">
+					<md-input-container class="md-block" flex-gt-sm>
+						<label>Home Address</label>
+						<input id="home-address" ng-model="NewUserController.user.homeAddress" type="text" required/>
+					</md-input-container>
+					<md-button class="md-icon-button" aria-label="Home" ng-click="NewUserController.searchHomeAddress()">
+						<md-tooltip md-direction="bottom">
+		          Find address on map
+		        </md-tooltip>
+						<md-icon md-svg-src="static/icons/ic_search_black_24px.svg"></md-icon>
+					</md-button>
+					<md-button class="md-icon-button" aria-label="Home" ng-click="NewUserController.setHomeToCurrentLocation()">
+						<md-tooltip md-direction="bottom">
+		          Use current location
+		        </md-tooltip>
+						<md-icon md-svg-src="static/icons/ic_my_location_black_24px.svg"></md-icon>
+					</md-button>
+				</div>
+
+				<!-- Office Address -->
+				<div layout-gt-sm="row">
+					<md-input-container class="md-block" flex-gt-sm>
+						<label>Office Address</label>
+						<input id="office-address" ng-model="NewUserController.user.officeAddress" type="text" required/>
+					</md-input-container>
+					<md-button class="md-icon-button" aria-label="Home" ng-click="NewUserController.searchOfficeAddress()">
+						<md-tooltip md-direction="bottom">
+		          Find address on map
+		        </md-tooltip>
+						<md-icon md-svg-src="static/icons/ic_search_black_24px.svg"></md-icon>
+					</md-button>
+					<md-button class="md-icon-button" aria-label="Home" ng-click="NewUserController.setOfficeToCurrentLocation()">
+						<md-tooltip md-direction="bottom">
+		          Use current location
+		        </md-tooltip>
+						<md-icon md-svg-src="static/icons/ic_my_location_black_24px.svg"></md-icon>
+					</md-button>
+				</div>
+
+				<!-- Shift start time -->
+				<div layout-gt-sm="row">
+					<md-input-container class="md-block" flex-gt-sm>
+						<label>Shift Start Time</label>
+						<md-select ng-model="NewUserController.user.shiftStartTime">
+						  <md-option ng-repeat="startTime in NewUserController.user.shiftStartTimes">{{ startTime }}</md-option>
+						</md-select>
+					</md-input-container>
+				</div>
+
+				<!-- Shift end time -->
+				<div layout-gt-sm="row">
+					<md-input-container class="md-block" flex-gt-sm>
+						<label>Shift End Time</label>
+						<md-select ng-model="NewUserController.user.shiftStopTime">
+						  <md-option ng-repeat="stopTime in NewUserController.user.shiftStopTimes">{{ stopTime }}</md-option>
+						</md-select>
+					</md-input-container>
+				</div>
+
+				<!-- submit -->
+				<div layout-gt-sm="row">
+					<md-button class="md-raised md-primary" type="submit">Submit</md-button>
+				</div>
+			</md-content>
+		</form>
+	
+</md-whiteframe>

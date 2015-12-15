@@ -1,0 +1,17 @@
+#newUser {
+	z-index: 2;
+	max-width: 400px;
+}
+
+body {
+	height: 100%;
+}
+
+#map-canvas {
+	height: 100%;
+	width: 100%;
+	position: absolute;
+	top: 0;
+	left: 0;
+	max-width: inherit;
+}
