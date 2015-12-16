@@ -49,14 +49,19 @@
 				</div>
 
 				<!-- Car Number Type -->
-				<div layout-gt-sm="row">
-					<md-input-container class="md-block" flex-gt-sm>
-						<label>Car Number Type</label>
-						<md-select ng-model="NewUserController.user.carNumberType">
+				<div layout="column">
+					<!-- <md-input-container class="md-block" flex-gt-sm> -->
+						<!-- <label>Car Number Type</label> -->
+						<!-- <md-select ng-model="NewUserController.user.carNumberType">
 							<md-option value="even">Even</md-option>
 							<md-option value="odd">Odd</md-option>
-						</md-select>
-					</md-input-container>
+						</md-select> -->
+						<p>Car Number Type:</p>
+						<md-radio-group ng-model="NewUserController.user.carNumberType">
+							<md-radio-button value="even" class="md-primary">Even</md-radio-button>
+							<md-radio-button value="odd">Odd</md-radio-button>
+						</md-radio-group>
+					<!-- </md-input-container> -->
 				</div>
 
 				<!-- Home Address -->
@@ -102,7 +107,7 @@
 				<!-- Shift start time -->
 				<div layout-gt-sm="row">
 					<md-input-container class="md-block" flex-gt-sm>
-						<label>Shift Start Time</label>
+						<label>Reach office at:</label>
 						<md-select ng-model="NewUserController.user.shiftStartTime">
 						  <md-option ng-repeat="startTime in NewUserController.user.shiftStartTimes">{{ startTime }}</md-option>
 						</md-select>
@@ -112,7 +117,7 @@
 				<!-- Shift end time -->
 				<div layout-gt-sm="row">
 					<md-input-container class="md-block" flex-gt-sm>
-						<label>Shift End Time</label>
+						<label>Leave for home at:</label>
 						<md-select ng-model="NewUserController.user.shiftStopTime">
 						  <md-option ng-repeat="stopTime in NewUserController.user.shiftStopTimes">{{ stopTime }}</md-option>
 						</md-select>
