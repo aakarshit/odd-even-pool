@@ -10,13 +10,94 @@
 		this.directionsDisplay = {};
 		this.markers = [];
 
+		// takes in an array of results that the geocoding api returns
+		// search for a result object that is an approximate location
+		// extract components from the geocode result object and convert to a local result object
+		function convertGeocodeResultToLocalResult(results) {
+			var localResult = new MapResult();
+
+			var geocodeResult = results[0];
+			for (var i = 0; i < results.length; ++i) {
+				if(results[i].geometry.location_type === "APPROXIMATE") {
+					geocodeResult = results[i];
+					break;
+				}
+			}
+
+			localResult.formatted_address = geocodeResult.formatted_address;
+
+			for (var i = 0; i < geocodeResult.address_components.length; ++i) {
+				
+				var addressComponent = geocodeResult.address_components[i];
+
+				switch(addressComponent.types[0]) {
+					case "country":
+						localResult.country = addressComponent.short_name || "";
+						break;
+					case "postal_code":
+						localResult.postal_code = addressComponent.short_name || "";
+						break;
+					case "administrative_area_level_1":
+						localResult.administrative_area_level_1 = addressComponent.short_name || "";
+						break;
+					case "administrative_area_level_2":
+						localResult.administrative_area_level_2 = addressComponent.short_name || "";
+						break;
+					case "administrative_area_level_3":
+						localResult.administrative_area_level_3 = addressComponent.short_name || "";
+						break;
+					case "administrative_area_level_4":
+						localResult.administrative_area_level_4 = addressComponent.short_name || "";
+						break;
+					case "administrative_area_level_5":
+						localResult.administrative_area_level_5 = addressComponent.short_name || "";
+						break;
+					case "locality":
+						localResult.locality = addressComponent.short_name || "";
+						break;
+					case "sublocality_level_1":
+						localResult.sublocality_level_1 = addressComponent.short_name || "";
+						break;
+					case "sublocality_level_2":
+						localResult.sublocality_level_2 = addressComponent.short_name || "";
+						break;
+					case "sublocality_level_3":
+						localResult.sublocality_level_3 = addressComponent.short_name || "";
+						break;
+					case "sublocality_level_4":
+						localResult.sublocality_level_4 = addressComponent.short_name || "";
+						break;
+					case "sublocality_level_5":
+						localResult.sublocality_level_5 = addressComponent.short_name || "";
+						break;
+					case "neighborhood":
+						localResult.neighborhood = addressComponent.short_name || "";
+						break;
+					case "premise":
+						localResult.premise = addressComponent.short_name || "";
+						break;
+					case "subpremise":
+						localResult.subpremise = addressComponent.short_name || "";
+						break;
+				} // end switch
+			} // end loop through address components
+
+			localResult.lat = geocodeResult.geometry.location.lat();
+			localResult.lng = geocodeResult.geometry.location.lng();
+
+			console.log(localResult);
+
+			return localResult;
+		}
+
 		// fetches address from lat long
 		function getAddressFromLatLng(latLng) {
 			var deferred = $q.defer();
 			that.geocoder.geocode({'location': latLng}, function(results, status) {
 		    if (status === google.maps.GeocoderStatus.OK) {
-		      if (results[1]) {
-		        deferred.resolve(results[1].formatted_address);
+		    	var result = convertGeocodeResultToLocalResult(results);
+		      if (result) {
+		        deferred.resolve(result);
 		      } else {
 		        deferred.reject("No reverse geocoding results found");
 		      }
@@ -32,8 +113,9 @@
 			var deferred = $q.defer();
 			that.geocoder.geocode({'address': address}, function(results, status) {
 		    if (status === google.maps.GeocoderStatus.OK) {
-		      if (results[0]) {
-		        deferred.resolve(results[0].geometry.location);
+		    	var result = convertGeocodeResultToLocalResult(results);
+		      if (result) {
+		        deferred.resolve(result);
 		      } else {
 		        deferred.reject("No geocoding results found");
 		      }
@@ -69,7 +151,10 @@
 			var deferred = $q.defer();
 
 			getLatLngFromAddress(address)
-			.then(function(latLng){
+			.then(function(result){
+
+				var latLng = {lat: result.lat, lng: result.lng}
+
 				console.log(latLng);
 
       	// center the map
@@ -93,9 +178,9 @@
 				  google.maps.event.addListener(marker, 'dragend', function(event){
 				    console.log(event.latLng);
 				    getAddressFromLatLng(event.latLng)
-				    .then(function(address){
+				    .then(function(result){
 				    	tryDrawRoute();
-				    	locationUpdateCallback({status: true, address: address});
+				    	locationUpdateCallback({status: true, result: result});
 				    }, function(reason){
 				    	locationUpdateCallback({status: false});
 				    })
@@ -106,7 +191,7 @@
 			  tryDrawRoute();
 
 			  // return status
-			  deferred.resolve();
+			  deferred.resolve(result);
 
 			}, function(reason){
 				// failed to search address
@@ -132,7 +217,9 @@
 
 		      // get address from lat long
 		      getAddressFromLatLng(latLng)
-		      .then(function(address){
+		      .then(function(result){
+
+		      	var address = result.formatted_address;
 		      	
 		      	console.log(address);
 
@@ -140,10 +227,7 @@
 		      	that.map.setCenter(latLng);
 
 		      	// send fetched address to caller
-		      	deferred.resolve({
-	        		latlng: latLng,
-	        		address: address
-		        });
+		      	deferred.resolve(result);
 
 		      	// place a marker on location
 		      	var marker = {};
@@ -163,9 +247,9 @@
 						  google.maps.event.addListener(marker, 'dragend', function(event){
 						    console.log(event.latLng);
 						    getAddressFromLatLng(event.latLng)
-						    .then(function(address){
+						    .then(function(result){
 						    	tryDrawRoute();
-						    	locationUpdateCallback({status: true, address: address});
+						    	locationUpdateCallback({status: true, result: result});
 						    }, function(reason){
 						    	locationUpdateCallback({status: false});
 						    })

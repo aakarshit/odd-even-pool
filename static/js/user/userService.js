@@ -16,9 +16,9 @@
 
 		this.setHomeToCurrentLocation = function() {
 			mapService.getCurrentLocation("Home", homeLocationUpdated)
-			.then(function(currentLocation){
-				console.log(currentLocation);
-				that.user.homeAddress = currentLocation.address;
+			.then(function(result){
+				console.log(result);
+				that.user.homeAddress = result.formatted_address;
 			}, function(reason){
 				console.log(reason);
 			});
@@ -26,9 +26,9 @@
 
 		this.setOfficeToCurrentLocation = function() {
 			mapService.getCurrentLocation("Office", officeLocationUpdated)
-			.then(function(currentLocation){
-				console.log(currentLocation);
-				that.user.officeAddress = currentLocation.address;
+			.then(function(result){
+				console.log(result);
+				that.user.officeAddress = result.formatted_address;
 			}, function(reason){
 				console.log(reason);
 			});
@@ -36,8 +36,9 @@
 
 		this.searchHomeAddress = function() {
 			mapService.searchAddress(that.user.homeAddress, "Home", homeLocationUpdated)
-			.then(function(){
+			.then(function(result){
 				console.log("Search successful for home address");
+				that.user.homeAddress = result.formatted_address;
 			}, function(reason){
 				console.log(reason);
 			});
@@ -45,30 +46,31 @@
 
 		this.searchOfficeAddress = function() {
 			mapService.searchAddress(that.user.officeAddress, "Office", officeLocationUpdated)
-			.then(function(){
+			.then(function(result){
 				console.log("Search successful for office address");
+				that.user.officeAddress = result.formatted_address;
 			}, function(reason){
 				console.log(reason);
 			});
 		};
 
 
-		function homeLocationUpdated(result) {
-			if(result.status === false) {
+		function homeLocationUpdated(response) {
+			if(response.status === false) {
 				console.log("Failed to fetch address from marker, try dragging marker again");
 				return;
 			}
-			console.log("Home address updated to: " + result.address);
-			that.user.homeAddress = result.address;
+			console.log("Home address updated to: " + response.result.formatted_address);
+			that.user.homeAddress = response.result.formatted_address;
 		}
 
-		function officeLocationUpdated(result) {
-			if(result.status === false) {
+		function officeLocationUpdated(response) {
+			if(response.status === false) {
 				console.log("Failed to fetch address from marker, try dragging marker again");
 				return;
 			}
-			console.log("Office address updated to: " + result.address);
-			that.user.officeAddress = result.address;
+			console.log("Office address updated to: " + response.result.formatted_address);
+			that.user.officeAddress = response.result.formatted_address;
 		}
 
 		//that.setHomeToCurrentLocation();
