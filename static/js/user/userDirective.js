@@ -1,7 +1,7 @@
 (function(){
 	var app = angular.module("userModule");
 
-	app.directive("newUser", ["userService", "$mdDialog", function(userService, $mdDialog){
+	app.directive("newUser", ["userService", "$mdDialog", "$http", function(userService, $mdDialog, $http){
 		return {
 			restrict: 'AE',
 			templateUrl: 'static/views/new-user.html',
@@ -12,23 +12,39 @@
 				this.user = userService.user;
 
 				this.AddNewUser = function() {
-					if(!newUserForm.$valid) {
-						return;
-					}
-
 					console.log("Adding new user");
 
+					// if(!newUserForm.$valid) {
+					// 	console.log("form not valid");
+					// 	console.log(newUserForm.$error);
+					// 	return;
+					// }
+
+					
+
 					// post call to add this entry to the database
+					$http.post('/api',{ user: that.user })
+						.then(function(response){
+							// success
+							console.log(response.data);
+
+							$mdDialog.show($mdDialog.alert()
+								.clickOutsideToClose(true)
+								.title("Submission Confirmation")
+								.textContent("Thank you for your submission, we will get back to you at " 
+									+ that.user.mobileOrEmail + " as soon as we find a match.")
+								.ariaLabel("Submission Confirmation Dialog")
+								.ok("Okay")
+								);
+						}, function(response){
+							// failure
+							console.log("Failed to submit data");
+							console.log(response);
+						});
 
 					// todo: add this to the callback of the post call
 					// show confirmation dialog
-					$mdDialog.show($mdDialog.alert()
-						.clickOutsideToClose(true)
-						.title("Submission Confirmation")
-						.textContent("Thank you for your submission, we will get back to you at " + that.user.mobileOrEmail + " as soon as we find a match.")
-						.ariaLabel("Submission Confirmation Dialog")
-						.ok("Okay")
-						);
+					
 
 				};
 

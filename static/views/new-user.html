@@ -1,7 +1,7 @@
 <md-whiteframe class="md-whiteframe-15dp">
 
 	
-		<md-toolbar md-scroll-shrink>
+		<md-toolbar>
 	    <div class="md-toolbar-tools">
 
 	    	<!-- Title -->
@@ -31,8 +31,8 @@
 
 	  
 
-		<form novalidate ng-submit="NewUserController.AddNewUser()" name="newUserForm">
-			<md-content layout-padding ng-show="NewUserController.expanded">
+		<form novalidate ng-submit="NewUserController.AddNewUser()" name="newUserForm" >
+			<md-content flex layout-padding ng-show="NewUserController.expanded" class="newUserFormContent">
 
 				<div layout-gt-sm="row">
 					<md-content flex>
