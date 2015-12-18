@@ -68,7 +68,7 @@
 				<div layout-gt-sm="row">
 					<md-input-container class="md-block" flex-gt-sm>
 						<label>Home Address</label>
-						<input id="home-address" ng-model="NewUserController.user.homeAddress" type="text" required/>
+						<input id="home-address" ng-model="NewUserController.user.home.formatted_address" type="text" required/>
 					</md-input-container>
 					<md-button class="md-icon-button" aria-label="Home" ng-click="NewUserController.searchHomeAddress()">
 						<md-tooltip md-direction="bottom">
@@ -88,7 +88,7 @@
 				<div layout-gt-sm="row">
 					<md-input-container class="md-block" flex-gt-sm>
 						<label>Office Address</label>
-						<input id="office-address" ng-model="NewUserController.user.officeAddress" type="text" required/>
+						<input id="office-address" ng-model="NewUserController.user.office.formatted_address" type="text" required/>
 					</md-input-container>
 					<md-button class="md-icon-button" aria-label="Home" ng-click="NewUserController.searchOfficeAddress()">
 						<md-tooltip md-direction="bottom">

@@ -5,8 +5,8 @@
 		var that = this;
 
 		this.user = {};
-		this.user.homeAddress = "";
-		this.user.officeAddress = "";
+		this.user.home = new MapResult();
+		this.user.office = new MapResult();
 		this.user.mobileOrEmail = "";
 		this.user.carNumberType = "even";
 		this.user.shiftStartTimes = ["8 AM", "2 PM", "8 PM", "2 AM"];
@@ -18,7 +18,7 @@
 			mapService.getCurrentLocation("Home", homeLocationUpdated)
 			.then(function(result){
 				console.log(result);
-				that.user.homeAddress = result.formatted_address;
+				that.user.home = result;
 			}, function(reason){
 				console.log(reason);
 			});
@@ -28,27 +28,27 @@
 			mapService.getCurrentLocation("Office", officeLocationUpdated)
 			.then(function(result){
 				console.log(result);
-				that.user.officeAddress = result.formatted_address;
+				that.user.office = result;
 			}, function(reason){
 				console.log(reason);
 			});
 		};
 
 		this.searchHomeAddress = function() {
-			mapService.searchAddress(that.user.homeAddress, "Home", homeLocationUpdated)
+			mapService.searchAddress(that.user.home.formatted_address, "Home", homeLocationUpdated)
 			.then(function(result){
 				console.log("Search successful for home address");
-				that.user.homeAddress = result.formatted_address;
+				that.user.home = result;
 			}, function(reason){
 				console.log(reason);
 			});
 		};
 
 		this.searchOfficeAddress = function() {
-			mapService.searchAddress(that.user.officeAddress, "Office", officeLocationUpdated)
+			mapService.searchAddress(that.user.office.formatted_address, "Office", officeLocationUpdated)
 			.then(function(result){
 				console.log("Search successful for office address");
-				that.user.officeAddress = result.formatted_address;
+				that.user.office = result;
 			}, function(reason){
 				console.log(reason);
 			});
@@ -61,7 +61,7 @@
 				return;
 			}
 			console.log("Home address updated to: " + response.result.formatted_address);
-			that.user.homeAddress = response.result.formatted_address;
+			that.user.home = response.result;
 		}
 
 		function officeLocationUpdated(response) {
@@ -70,7 +70,7 @@
 				return;
 			}
 			console.log("Office address updated to: " + response.result.formatted_address);
-			that.user.officeAddress = response.result.formatted_address;
+			that.user.office = response.result;
 		}
 
 		//that.setHomeToCurrentLocation();
