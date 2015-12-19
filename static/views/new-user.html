@@ -16,7 +16,8 @@
 		    	<md-tooltip md-direction="bottom">
 	          Show Less
 	        </md-tooltip>
-          <md-icon md-svg-icon="static/icons/ic_expand_less_white_24px.svg"></md-icon>
+          <md-icon md-svg-icon="static/icons/ic_expand_less_white_24px.svg">
+        	</md-icon>
         </md-button>
 
         <!-- Show More -->
@@ -24,51 +25,47 @@
         	<md-tooltip md-direction="bottom">
 	          Show More
 	        </md-tooltip>
-          <md-icon md-svg-icon="static/icons/ic_expand_more_white_24px.svg"></md-icon>
+          <md-icon md-svg-icon="static/icons/ic_expand_more_white_24px.svg">
+        	</md-icon>
         </md-button>
 	    </div>
 	  </md-toolbar>
 
 	  
 
-		<form novalidate ng-submit="NewUserController.AddNewUser()" name="newUserForm" >
+		<form ng-submit="NewUserController.AddNewUser()" name="newUserForm" >
 			<md-content flex layout-padding ng-show="NewUserController.expanded" class="newUserFormContent">
 
 				<div layout-gt-sm="row">
 					<md-content flex>
-					<p>Wondering how to get to office during the OddEven system? Looking for a neighbor with an odd or even numbered car to pool with? Just fill out this form and we'll match you with other folks who are looking out.</p>
-				</md-content>
+						<p>
+							Wondering how to get to office during the OddEven system? Looking for a neighbor with an odd or even numbered car to pool with? Just fill out this form and we'll match you with other folks who are looking out.
+						</p>
+					</md-content>
 				</div>
 
 				<!-- Mobile/Email -->
 				<div layout-gt-sm="row">
 					<md-input-container class="md-block" flex-gt-sm>
 						<label>Mobile number and/or Email address</label>
-						<input ng-model="NewUserController.user.mobileOrEmail" type="text" required/>
+						<input ng-model="NewUserController.user.mobileOrEmail" type="text" required />
 					</md-input-container>
 				</div>
 
 				<!-- Car Number Type -->
 				<div layout="column">
-					<!-- <md-input-container class="md-block" flex-gt-sm> -->
-						<!-- <label>Car Number Type</label> -->
-						<!-- <md-select ng-model="NewUserController.user.carNumberType">
-							<md-option value="even">Even</md-option>
-							<md-option value="odd">Odd</md-option>
-						</md-select> -->
-						<p>Car Number Type:</p>
-						<md-radio-group ng-model="NewUserController.user.carNumberType">
-							<md-radio-button value="even" class="md-primary">Even</md-radio-button>
-							<md-radio-button value="odd">Odd</md-radio-button>
-						</md-radio-group>
-					<!-- </md-input-container> -->
+					<p>Car Number Type</p>
+					<md-radio-group ng-model="NewUserController.user.carNumberType">
+						<md-radio-button value="even" class="md-primary">Even</md-radio-button>
+						<md-radio-button value="odd">Odd</md-radio-button>
+					</md-radio-group>
 				</div>
 
 				<!-- Home Address -->
 				<div layout-gt-sm="row">
 					<md-input-container class="md-block" flex-gt-sm>
 						<label>Home Address</label>
-						<input id="home-address" ng-model="NewUserController.user.home.formatted_address" type="text" required/>
+						<input id="home-address" ng-model="NewUserController.user.home.formatted_address" type="text" required />
 					</md-input-container>
 					<md-button class="md-icon-button" aria-label="Home" ng-click="NewUserController.searchHomeAddress()">
 						<md-tooltip md-direction="bottom">
@@ -88,7 +85,7 @@
 				<div layout-gt-sm="row">
 					<md-input-container class="md-block" flex-gt-sm>
 						<label>Office Address</label>
-						<input id="office-address" ng-model="NewUserController.user.office.formatted_address" type="text" required/>
+						<input id="office-address" ng-model="NewUserController.user.office.formatted_address" type="text" required />
 					</md-input-container>
 					<md-button class="md-icon-button" aria-label="Home" ng-click="NewUserController.searchOfficeAddress()">
 						<md-tooltip md-direction="bottom">
@@ -107,7 +104,7 @@
 				<!-- Shift start time -->
 				<div layout-gt-sm="row">
 					<md-input-container class="md-block" flex-gt-sm>
-						<label>Reach office at:</label>
+						<label>Reach office at</label>
 						<md-select ng-model="NewUserController.user.shiftStartTime">
 						  <md-option ng-repeat="startTime in NewUserController.user.shiftStartTimes">{{ startTime }}</md-option>
 						</md-select>
@@ -117,7 +114,7 @@
 				<!-- Shift end time -->
 				<div layout-gt-sm="row">
 					<md-input-container class="md-block" flex-gt-sm>
-						<label>Leave for home at:</label>
+						<label>Leave for home at</label>
 						<md-select ng-model="NewUserController.user.shiftStopTime">
 						  <md-option ng-repeat="stopTime in NewUserController.user.shiftStopTimes">{{ stopTime }}</md-option>
 						</md-select>

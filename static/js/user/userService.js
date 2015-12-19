@@ -3,16 +3,22 @@
 
 	app.service("userService", ["mapService", function(mapService){
 		var that = this;
+		var shiftTimings = [
+			"12 AM", "1 AM", "2 AM", "3 AM", "4 AM", "5 AM",
+			"6 AM", "7 AM", "8 AM", "9 AM", "10 AM", "11 AM",
+			"12 PM", "1 PM", "2 PM", "3 PM", "4 PM", "5 PM",
+			"6 PM", "7 PM", "8 PM", "9 PM", "10 PM", "11 PM"
+		];
 
 		this.user = {};
 		this.user.home = new MapResult();
 		this.user.office = new MapResult();
 		this.user.mobileOrEmail = "";
 		this.user.carNumberType = "even";
-		this.user.shiftStartTimes = ["8 AM", "2 PM", "8 PM", "2 AM"];
-		this.user.shiftStartTime = that.user.shiftStartTimes[0];
-		this.user.shiftStopTimes = ["4 PM", "10 PM", "4 AM", "10 AM"];
-		this.user.shiftStopTime = that.user.shiftStopTimes[0];
+		this.user.shiftStartTimes = shiftTimings;
+		this.user.shiftStartTime = that.user.shiftStartTimes[8];
+		this.user.shiftStopTimes = shiftTimings;
+		this.user.shiftStopTime = that.user.shiftStopTimes[16];
 
 		this.setHomeToCurrentLocation = function() {
 			mapService.getCurrentLocation("Home", homeLocationUpdated)

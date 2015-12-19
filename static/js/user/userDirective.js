@@ -14,11 +14,11 @@
 				this.AddNewUser = function() {
 					console.log("Adding new user");
 
-					// if(!newUserForm.$valid) {
-					// 	console.log("form not valid");
-					// 	console.log(newUserForm.$error);
-					// 	return;
-					// }
+					if(!newUserForm.$valid && newUserForm.$error) {
+						console.log("form not valid");
+						console.log(newUserForm.$error);
+						return;
+					}
 
 					
 
@@ -26,7 +26,7 @@
 					$http.post('/api',{ user: that.user })
 						.then(function(response){
 							// success
-							console.log(response.data);
+							console.log(response);
 
 							$mdDialog.show($mdDialog.alert()
 								.clickOutsideToClose(true)
