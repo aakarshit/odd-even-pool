@@ -21,6 +21,12 @@
 					}
 				}
 
+				function SubmitDialogController($scope, $mdDialog) {
+				  $scope.hide = function() {
+				    $mdDialog.hide();
+				  };
+				}
+
 				this.AddNewUser = function() {
 					console.log("Adding new user");
 
@@ -44,6 +50,15 @@
 								.ariaLabel("Submission Confirmation Dialog")
 								.ok("Okay")
 								);
+
+							// show submission confirmation dialog
+							// $mdDialog.show({
+					  //     controller: SubmitDialogController,
+					  //     templateUrl: 'static/views/submit-confirm.html',
+					  //     parent: angular.element(document.body),
+					  //     clickOutsideToClose:true,
+					  //   });
+
 						}, function(response){
 							// failure
 							console.log("Failed to submit data");

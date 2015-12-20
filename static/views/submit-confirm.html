@@ -1,0 +1,22 @@
+<md-dialog aria-label=""  ng-cloak>
+  <form>
+    <md-toolbar>
+      <div class="md-toolbar-tools">
+        <h2>Submission Confirmation</h2>
+      </div>
+    </md-toolbar>
+    <md-dialog-content>
+      <div class="md-dialog-content">
+        <p>
+          {{ "Thank you for your submission. Please bear with us while we search for the best match for your route. We'll get back to you at " + " as soon as possible" }}
+        </p>
+      </div>
+    </md-dialog-content>
+    <md-dialog-actions layout="row">
+      <div class="fb-share-button" data-href="https://www.oddevenpool.com" data-layout="button"></div>
+      <md-button ng-click="hide()">
+       Okay
+      </md-button>
+    </md-dialog-actions>
+  </form>
+</md-dialog>
