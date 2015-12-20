@@ -8,12 +8,20 @@
     <md-dialog-content>
       <div class="md-dialog-content">
         <p>
-          {{ "Thank you for your submission. Please bear with us while we search for the best match for your route. We'll get back to you at " + " as soon as possible" }}
+          <span>{{ "Thank you for your submission. We'll get back to you at " }}</span>
+          <span><b>{{ mobileOrEmail }}</b></span>
+          <span>{{" as soon as we find a match." }}</span>
         </p>
       </div>
     </md-dialog-content>
     <md-dialog-actions layout="row">
-      <div class="fb-share-button" data-href="https://www.oddevenpool.com" data-layout="button"></div>
+      <div
+        class="fb-share-button"
+        data-show-faces="true"
+        data-href="https://www.oddevenpool.com"
+        >
+      </div>
+      <a target="_blank" href="https://twitter.com/share" class="twitter-share-button"{count} data-url="http://www.oddevenpool.com" data-text="Check out this site" data-via="oddevenpool" data-size="large" data-hashtags="DelhiOddEven">Tweet</a>
       <md-button ng-click="hide()">
        Okay
       </md-button>

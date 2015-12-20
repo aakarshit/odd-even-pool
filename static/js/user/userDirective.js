@@ -21,7 +21,9 @@
 					}
 				}
 
-				function SubmitDialogController($scope, $mdDialog) {
+				function SubmitDialogController($scope, $mdDialog, mobileOrEmail) {
+					$scope.mobileOrEmail = mobileOrEmail;
+
 				  $scope.hide = function() {
 				    $mdDialog.hide();
 				  };
@@ -42,32 +44,22 @@
 							// success
 							console.log(response);
 
-							$mdDialog.show($mdDialog.alert()
-								.clickOutsideToClose(true)
-								.title("Submission Confirmation")
-								.textContent("Thank you for your submission, we will get back to you at " 
-									+ that.user.mobileOrEmail + " as soon as we find a match.")
-								.ariaLabel("Submission Confirmation Dialog")
-								.ok("Okay")
-								);
-
 							// show submission confirmation dialog
-							// $mdDialog.show({
-					  //     controller: SubmitDialogController,
-					  //     templateUrl: 'static/views/submit-confirm.html',
-					  //     parent: angular.element(document.body),
-					  //     clickOutsideToClose:true,
-					  //   });
+							$mdDialog.show({
+					      controller: SubmitDialogController,
+					      templateUrl: 'static/views/submit-confirm.html',
+					      parent: angular.element(document.body),
+					      clickOutsideToClose:true,
+					      locals: {
+					      	mobileOrEmail: that.user.mobileOrEmail
+					      }
+					    });
 
 						}, function(response){
 							// failure
 							console.log("Failed to submit data");
 							console.log(response);
 						});
-
-					// todo: add this to the callback of the post call
-					// show confirmation dialog
-					
 
 				};
 
