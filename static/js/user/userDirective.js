@@ -10,6 +10,16 @@
 
 				this.expanded = true;
 				this.user = userService.user;
+				this.searchingHome = false;
+				this.searchingOffice = false;
+
+				function searchCompleted(location) {
+					if(location === "Home") {
+						that.searchingHome = false;
+					} else if(location === "Office") {
+						that.searchingOffice = false;
+					}
+				}
 
 				this.AddNewUser = function() {
 					console.log("Adding new user");
@@ -19,8 +29,6 @@
 						console.log(newUserForm.$error);
 						return;
 					}
-
-					
 
 					// post call to add this entry to the database
 					$http.post('/api',{ user: that.user })
@@ -49,20 +57,26 @@
 				};
 
 				this.setHomeToCurrentLocation = function() {
-					userService.setHomeToCurrentLocation();
+					that.searchingHome = true;
+					userService.setHomeToCurrentLocation(searchCompleted);
 				};
 
 				this.setOfficeToCurrentLocation = function() {
-					userService.setOfficeToCurrentLocation();
+					that.searchingOffice = true;
+					userService.setOfficeToCurrentLocation(searchCompleted);
 				};
 
 				this.searchHomeAddress = function() {
-					userService.searchHomeAddress();					
+					that.searchingHome = true;
+					userService.searchHomeAddress(searchCompleted);
 				};
 
 				this.searchOfficeAddress = function() {
-					userService.searchOfficeAddress();					
+					that.searchingOffice = true;
+					userService.searchOfficeAddress(searchCompleted);
 				};
+
+				that.setHomeToCurrentLocation();
 
 			},
 			controllerAs: 'NewUserController'

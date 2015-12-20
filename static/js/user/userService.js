@@ -20,43 +20,51 @@
 		this.user.shiftStopTimes = shiftTimings;
 		this.user.shiftStopTime = that.user.shiftStopTimes[16];
 
-		this.setHomeToCurrentLocation = function() {
+		this.setHomeToCurrentLocation = function(callback) {
 			mapService.getCurrentLocation("Home", homeLocationUpdated)
 			.then(function(result){
 				console.log(result);
 				that.user.home = result;
+				callback("Home");
 			}, function(reason){
 				console.log(reason);
+				callback("Home");
 			});
 		};
 
-		this.setOfficeToCurrentLocation = function() {
+		this.setOfficeToCurrentLocation = function(callback) {
 			mapService.getCurrentLocation("Office", officeLocationUpdated)
 			.then(function(result){
 				console.log(result);
 				that.user.office = result;
+				callback("Office");
 			}, function(reason){
 				console.log(reason);
+				callback("Office");
 			});
 		};
 
-		this.searchHomeAddress = function() {
+		this.searchHomeAddress = function(callback) {
 			mapService.searchAddress(that.user.home.formatted_address, "Home", homeLocationUpdated)
 			.then(function(result){
 				console.log("Search successful for home address");
 				that.user.home = result;
+				callback("Home");
 			}, function(reason){
 				console.log(reason);
+				callback("Home");
 			});
 		};
 
-		this.searchOfficeAddress = function() {
+		this.searchOfficeAddress = function(callback) {
 			mapService.searchAddress(that.user.office.formatted_address, "Office", officeLocationUpdated)
 			.then(function(result){
 				console.log("Search successful for office address");
 				that.user.office = result;
+				callback("Office");
 			}, function(reason){
 				console.log(reason);
+				callback("Office");
 			});
 		};
 
@@ -78,9 +86,6 @@
 			console.log("Office address updated to: " + response.result.formatted_address);
 			that.user.office = response.result;
 		}
-
-		that.setHomeToCurrentLocation();
-
 
 	}]);
 
