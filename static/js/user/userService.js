@@ -79,7 +79,7 @@
 			that.user.office = response.result;
 		}
 
-		//that.setHomeToCurrentLocation();
+		that.setHomeToCurrentLocation();
 
 
 	}]);
