@@ -21,14 +21,6 @@
 					}
 				}
 
-				function SubmitDialogController($scope, $mdDialog, mobileOrEmail) {
-					$scope.mobileOrEmail = mobileOrEmail;
-
-				  $scope.hide = function() {
-				    $mdDialog.hide();
-				  };
-				}
-
 				this.AddNewUser = function() {
 					console.log("Adding new user");
 
@@ -46,7 +38,12 @@
 
 							// show submission confirmation dialog
 							$mdDialog.show({
-					      controller: SubmitDialogController,
+					      controller: ["$scope", "$mdDialog", "mobileOrEmail", function($scope, $mdDialog, mobileOrEmail) {
+					      	$scope.mobileOrEmail = mobileOrEmail;
+								  $scope.hide = function() {
+								    $mdDialog.hide();
+								  };
+					      }],
 					      templateUrl: 'static/views/submit-confirm.html',
 					      parent: angular.element(document.body),
 					      clickOutsideToClose:true,

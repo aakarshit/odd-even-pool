@@ -1,0 +1,1 @@
+(function(){var a=angular.module("OddEvenApp",["ngMaterial","mapModule","userModule"])})();
