@@ -8,6 +8,7 @@
 	    	<h2>
 		    	<span>OddEvenPool.com</span>
 		    </h2>
+		    <md-button class="md-raised md-warn">Beta</md-button>
 
 	    	<span flex></span>
 
@@ -33,7 +34,7 @@
 
 	  
 
-		<form ng-submit="NewUserController.AddNewUser()" name="newUserForm" >
+		<form ng-submit="NewUserController.submitForm()" name="newUserForm" >
 			<md-content flex layout-padding ng-show="NewUserController.expanded" class="newUserFormContent">
 
 				<div layout-gt-sm="row">
@@ -47,14 +48,14 @@
 				<!-- Mobile/Email -->
 				<div layout-gt-sm="row">
 					<md-input-container class="md-block" flex-gt-sm>
-						<label>Mobile number and/or Email address</label>
+						<label>Email address or mobile number</label>
 						<input ng-model="NewUserController.user.mobileOrEmail" type="text" required />
 					</md-input-container>
 				</div>
 
 				<!-- Car Number Type -->
 				<div layout="column">
-					<p>Car Number Type</p>
+					<p>My car number is</p>
 					<md-radio-group ng-model="NewUserController.user.carNumberType">
 						<md-radio-button value="even" class="md-primary">Even</md-radio-button>
 						<md-radio-button value="odd">Odd</md-radio-button>
@@ -63,44 +64,62 @@
 
 				<!-- Home Address -->
 				<div layout-gt-sm="row">
-					<md-input-container class="md-block" flex-gt-sm>
-						<label>Home Address</label>
-						<input id="home-address" ng-model="NewUserController.user.home.formatted_address" type="text" required />
-					</md-input-container>
-					<md-progress-circular ng-show="NewUserController.searchingHome" md-mode="indeterminate"></md-progress-circular>
-					<md-button class="md-icon-button" aria-label="Home" ng-click="NewUserController.searchHomeAddress()">
-						<md-tooltip md-direction="bottom">
-		          Find address on map
+					<md-autocomplete flex required
+						md-input-id="home-address"
+            md-input-name="home-address"
+            md-input-minlength="1"
+            md-no-cache="true"
+            md-selected-item="NewUserController.addressAutocomplete.home.selectedItem"
+            md-selected-item-change="NewUserController.addressSelected('home')"
+            md-search-text="NewUserController.user.address.home"
+            md-search-text-change="NewUserController.addressChanged('home')"
+            md-delay="500"
+            md-items="item in NewUserController.addressAutocomplete.home.autocompleteSuggestions"
+            md-item-text="item.description"
+            md-floating-label="Home Address">
+	          <md-item-template>
+	            <span md-highlight-text="NewUserController.user.address.home">{{item.description}}</span>
+	          </md-item-template>
+	          <md-not-found>
+	        	</md-not-found>
+	        </md-autocomplete>
+	        <!-- <md-button ng-click="NewUserController.dropMarkerClicked('home')" class="md-icon-button" aria-label="More">
+	        	<md-tooltip md-direction="bottom">
+		          Use marker to find address
 		        </md-tooltip>
-						<md-icon md-svg-src="static/icons/ic_search_black_24px.svg"></md-icon>
-					</md-button>
-					<md-button class="md-icon-button" aria-label="Home" ng-click="NewUserController.setHomeToCurrentLocation()">
-						<md-tooltip md-direction="bottom">
-		          Use current location
-		        </md-tooltip>
-						<md-icon md-svg-src="static/icons/ic_my_location_black_24px.svg"></md-icon>
-					</md-button>
+	          <md-icon md-svg-icon="static/icons/ic_pin_drop_black_24px.svg">
+	        	</md-icon>
+	        </md-button> -->
 				</div>
 
 				<!-- Office Address -->
 				<div layout-gt-sm="row">
-					<md-input-container class="md-block" flex-gt-sm>
-						<label>Office Address</label>
-						<input id="office-address" ng-model="NewUserController.user.office.formatted_address" type="text" required />
-					</md-input-container>
-					<md-progress-circular ng-show="NewUserController.searchingOffice" md-mode="indeterminate"></md-progress-circular>
-					<md-button class="md-icon-button" aria-label="Home" ng-click="NewUserController.searchOfficeAddress()">
-						<md-tooltip md-direction="bottom">
-		          Find address on map
+					<md-autocomplete flex required
+						md-input-id="office-address"
+            md-input-name="office-address"
+            md-input-minlength="1"
+            md-no-cache="true"
+            md-selected-item="NewUserController.addressAutocomplete.office.selectedItem"
+            md-selected-item-change="NewUserController.addressSelected('office')"
+            md-search-text="NewUserController.user.address.office"
+            md-search-text-change="NewUserController.addressChanged('office')"
+            md-delay="500"
+            md-items="item in NewUserController.addressAutocomplete.office.autocompleteSuggestions"
+            md-item-text="item.description"
+            md-floating-label="Office Address">
+	          <md-item-template>
+	            <span md-highlight-text="NewUserController.user.address.office">{{item.description}}</span>
+	          </md-item-template>
+	          <md-not-found>
+	        	</md-not-found>
+	        </md-autocomplete>
+	        <!-- <md-button ng-click="NewUserController.dropMarkerClicked('office')" class="md-icon-button" aria-label="More">
+	        	<md-tooltip md-direction="bottom">
+		          Use marker to find address
 		        </md-tooltip>
-						<md-icon md-svg-src="static/icons/ic_search_black_24px.svg"></md-icon>
-					</md-button>
-					<md-button class="md-icon-button" aria-label="Home" ng-click="NewUserController.setOfficeToCurrentLocation()">
-						<md-tooltip md-direction="bottom">
-		          Use current location
-		        </md-tooltip>
-						<md-icon md-svg-src="static/icons/ic_my_location_black_24px.svg"></md-icon>
-					</md-button>
+	          <md-icon md-svg-icon="static/icons/ic_pin_drop_black_24px.svg">
+	        	</md-icon>
+	        </md-button> -->
 				</div>
 
 				<!-- Shift start time -->

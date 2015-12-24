@@ -1,42 +1,43 @@
 (function(){
 	var app = angular.module("userModule");
 
-	app.directive("newUser", ["userService", "$mdDialog", "$http", function(userService, $mdDialog, $http){
+	// app.directive("autocompleteChange", ["$timeout", "userService", function($timeout, userService) {
+	// 	return {
+	// 		link: function(scope, element, attrs) {
+	// 			$timeout(function(){
+	// 				// element.find("#home-address").bind("input", function() {
+	// 				// 	console.log("[autocompleteChange]: Home address changed");
+	// 				// 	userService.populateAutocompleteSuggestions('home');
+	// 				// });
+	// 				// element.find("#office-address").bind("input", function() {
+	// 				// 	console.log("[autocompleteChange]: Office address changed");
+	// 				// 	userService.populateAutocompleteSuggestions('office');
+	// 				// });
+	// 			}, 0);
+	// 		}
+	// 	}
+	// }]);
+
+	app.directive("newUser", ["userService", "$mdDialog", function(userService, $mdDialog){
 		return {
 			restrict: 'AE',
 			templateUrl: 'static/views/new-user.html',
 			controller: function(){
-				var that = this;
 
+				var that = this;
 				this.expanded = true;
 				this.user = userService.user;
-				this.searchingHome = false;
-				this.searchingOffice = false;
+				this.addressAutocomplete = userService.addressAutocomplete;
 
-				function searchCompleted(location) {
-					if(location === "Home") {
-						that.searchingHome = false;
-					} else if(location === "Office") {
-						that.searchingOffice = false;
-					}
-				}
-
-				this.AddNewUser = function() {
-					console.log("Adding new user");
-
+				// submit form
+				this.submitForm = function() {
 					if(!newUserForm.$valid && newUserForm.$error) {
-						console.log("form not valid");
+						console.log("[submitForm]: Form not valid");
 						console.log(newUserForm.$error);
 						return;
 					}
-
-					// post call to add this entry to the database
-					$http.post('/api',{ user: that.user })
+					userService.addUserToBackend()
 						.then(function(response){
-							// success
-							console.log(response);
-
-							// show submission confirmation dialog
 							$mdDialog.show({
 					      controller: ["$scope", "$mdDialog", "mobileOrEmail", function($scope, $mdDialog, mobileOrEmail) {
 					      	$scope.mobileOrEmail = mobileOrEmail;
@@ -51,36 +52,30 @@
 					      	mobileOrEmail: that.user.mobileOrEmail
 					      }
 					    });
-
+					    userService.resetData();
 						}, function(response){
-							// failure
-							console.log("Failed to submit data");
-							console.log(response);
+							console.log("[submitForm]: Failed to submit form - " + response);
 						});
 
+					// clear the form
+
 				};
 
-				this.setHomeToCurrentLocation = function() {
-					that.searchingHome = true;
-					userService.setHomeToCurrentLocation(searchCompleted);
+				// this.dropMarkerClicked = function(location) {
+				// 	console.log("[dropMarkerClicked]: dropped marker on location: " + location);
+				// };
+
+				// handler for when an address is changed
+				this.addressChanged = function(location) {
+					console.log("[addressChanged]: " + location + " address changed");
+					userService.populateAutocompleteSuggestions(location);	
 				};
 
-				this.setOfficeToCurrentLocation = function() {
-					that.searchingOffice = true;
-					userService.setOfficeToCurrentLocation(searchCompleted);
+				// handler for when an autocomplete suggestion is selected
+				this.addressSelected = function(location) {
+					console.log("[addressSelected]: " + location + " autocomplete address selected");
+					userService.processAutocompleteItemSelected(location);	
 				};
-
-				this.searchHomeAddress = function() {
-					that.searchingHome = true;
-					userService.searchHomeAddress(searchCompleted);
-				};
-
-				this.searchOfficeAddress = function() {
-					that.searchingOffice = true;
-					userService.searchOfficeAddress(searchCompleted);
-				};
-
-				that.setHomeToCurrentLocation();
 
 			},
 			controllerAs: 'NewUserController'

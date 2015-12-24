@@ -3,19 +3,38 @@
 
 	app.service("mapService", ["$q", function($q){
 		var that = this;
+		var currentLocationLatLng = null;
 
 		this.map = {};
 		this.geocoder = {};
 		this.directionsService = {};
 		this.directionsDisplay = {};
-		this.markers = [];
+		this.autocompleteService = {};
+		this.placeService = {};
 
+		// intialize
+		(function() {
+			that.map = new google.maps.Map(document.getElementById('map-canvas'), {
+				center: new google.maps.LatLng(28.6100, 77.2300),
+		    zoom: 12
+			});
+			that.geocoder = new google.maps.Geocoder;
+			that.autocompleteService = new google.maps.places.AutocompleteService();
+			that.placeService = new google.maps.places.PlacesService(that.map);
+			that.directionsService = new google.maps.DirectionsService();
+			that.directionsDisplay = new google.maps.DirectionsRenderer({
+				markerOptions: {
+					visible: false
+				}
+			});
+			that.directionsDisplay.setMap(that.map);
+		})();
+
+		
 		// takes in an array of results that the geocoding api returns
 		// search for a result object that is an approximate location
 		// extract components from the geocode result object and convert to a local result object
-		function convertGeocodeResultToLocalResult(results) {
-			var localResult = new MapResult();
-
+		function parseGeocodeResults(results) {
 			var geocodeResult = results[0];
 			for (var i = 0; i < results.length; ++i) {
 				if(results[i].geometry.location_type === "APPROXIMATE") {
@@ -23,13 +42,15 @@
 					break;
 				}
 			}
+			return convertGeocodeResultToLocalResult(geocodeResult);
+		}
 
+
+		function convertGeocodeResultToLocalResult(geocodeResult) {
+			var localResult = {};
 			localResult.formatted_address = geocodeResult.formatted_address;
-
 			for (var i = 0; i < geocodeResult.address_components.length; ++i) {
-				
 				var addressComponent = geocodeResult.address_components[i];
-
 				switch(addressComponent.types[0]) {
 					case "country":
 						localResult.country = addressComponent.short_name || "";
@@ -81,21 +102,19 @@
 						break;
 				} // end switch
 			} // end loop through address components
-
 			localResult.lat = geocodeResult.geometry.location.lat();
 			localResult.lng = geocodeResult.geometry.location.lng();
-
-			console.log(localResult);
-
 			return localResult;
 		}
 
 		// fetches address from lat long
 		function getAddressFromLatLng(latLng) {
+			console.log("[getAddressFromLatLng]: Fetching address from lat long:");
+			console.log(latLng)
 			var deferred = $q.defer();
 			that.geocoder.geocode({'location': latLng}, function(results, status) {
 		    if (status === google.maps.GeocoderStatus.OK) {
-		    	var result = convertGeocodeResultToLocalResult(results);
+		    	var result = parseGeocodeResults(results);
 		      if (result) {
 		        deferred.resolve(result);
 		      } else {
@@ -108,197 +127,133 @@
 			return deferred.promise;
 		}
 
-		// fetches lat long from address
-		function getLatLngFromAddress(address) {
-			var deferred = $q.defer();
-			that.geocoder.geocode({'address': address}, function(results, status) {
-		    if (status === google.maps.GeocoderStatus.OK) {
-		    	var result = convertGeocodeResultToLocalResult(results);
-		      if (result) {
-		        deferred.resolve(result);
-		      } else {
-		        deferred.reject("No geocoding results found");
-		      }
-		    } else {
-		      deferred.reject('Geocoder failed due to: ' + status);
-		    }
-			});
-			return deferred.promise;
-		}
+		this.removeMarker = function(marker) {
+			console.log("[removeMarker]: removing marker from map");
+			marker.setMap(null);
+		};
 
-		// if both markers have been placed, draw route
-		// else noop
-		function tryDrawRoute() {
-			if(that.markers["Home"] && that.markers["Office"]) {
-				console.log("drawing route from home to office");
+		this.removeRoute = function() {
+			console.log("[removeRoute]: removing route from map");
+			that.directionsDisplay.setMap(null);
+		};
+
+		// drop a marker on given location and return the marker
+		this.dropMarker = function(marker, location, markerChangedCallback) {
+			console.log("[dropMarker]: dropping marker on location:");
+			console.log(location);
+			var latLng = {lat: location.lat, lng: location.lng};
+			if(marker === null) {
+				marker = new google.maps.Marker({
+					position: latLng,
+					map: that.map,
+					draggable: true,
+					animation: google.maps.Animation.DROP,
+					label: location.locationName,
+					title: location.locationName
+				});
+			}
+			marker.setPosition(latLng);
+			that.map.setCenter(latLng);
+			marker.setMap(that.map);
+			google.maps.event.addListener(marker, 'dragend', function(event){
+		    console.log("[dropMarker]: marker dragged to location:");
+		    console.log(event.latLng);
+		    getAddressFromLatLng(event.latLng)
+		    .then(function(result){
+		    	markerChangedCallback(true, marker.getLabel(), result);
+		    }, function(reason){
+		    	markerChangedCallback(false, marker.getLabel());
+		    })
+			});
+			return marker;
+		};
+
+		// draw a route from home to office
+		this.drawRoute = function(fromMarker, toMarker) {
+			console.log("[drawRoute]: drawing route from home to office");
+			var deferred = $q.defer();
+			if(fromMarker === null || toMarker === null) {
+				deferred.reject("Atleast one marker not populated");
+			} else {
 				var request = {
-					origin: that.markers["Home"].getPosition(),
-					destination: that.markers["Office"].getPosition(),
+					origin: fromMarker.getPosition(),
+					destination: toMarker.getPosition(),
 					travelMode: google.maps.TravelMode.DRIVING
 				};
 				that.directionsService.route(request, function(result, status) {
 			  	if (status == google.maps.DirectionsStatus.OK) {
 			      that.directionsDisplay.setDirections(result);
+			      deferred.resolve(status);
+			    } else {
+			    	deferred.reject(status);
 			    }
 			  });
 			}
+		  return deferred.promise;
 		}
 
-		// get lat long from address
-		// create/place existing marker on location and center map
-		// set the locationUpdate callback as handler for marker's dragend event
-		this.searchAddress = function(address, locationName, locationUpdateCallback) {
+		// search for autocomplete suggestions
+		this.getAutocompleteSuggestions = function(searchText) {
+			console.log("[getAutocompleteSuggestions]: Fetching autocomplete suggestions for: " + searchText);
 			var deferred = $q.defer();
-
-			getLatLngFromAddress(address)
-			.then(function(result){
-
-				var latLng = {lat: result.lat, lng: result.lng}
-
-				console.log(latLng);
-
-      	// center the map
-      	that.map.setCenter(latLng);
-
-      	// place a marker on location
-      	var marker = {};
-      	if(that.markers[locationName]) {
-      		marker = that.markers[locationName];
-      		marker.setPosition(latLng);
-      	} else {
-					marker = new google.maps.Marker({
-				    position: latLng,
-				    map: that.map,
-				    title: locationName,
-				    draggable: true,
-						animation: google.maps.Animation.DROP,
-						label: locationName
-				  });
-				  // register callback for marker's dragend event
-				  google.maps.event.addListener(marker, 'dragend', function(event){
-				    console.log(event.latLng);
-				    getAddressFromLatLng(event.latLng)
-				    .then(function(result){
-				    	tryDrawRoute();
-				    	locationUpdateCallback({status: true, result: result});
-				    }, function(reason){
-				    	locationUpdateCallback({status: false});
-				    })
-					});
-				  that.markers[locationName] = marker;
-      	}
-			  marker.setMap(that.map);
-			  tryDrawRoute();
-
-			  // return status
-			  deferred.resolve(result);
-
-			}, function(reason){
-				// failed to search address
-	    	deferred.reject("Failed to search address");
+			that.autocompleteService.getPlacePredictions({ 
+				input: searchText 
+			}, function(predictions, status) {
+				if (status != google.maps.places.PlacesServiceStatus.OK) {
+		      deferred.reject(status);
+		    }
+				deferred.resolve(predictions);
 			});
-
 			return deferred.promise;
 		};
 
-		// gets the user's current location in latlong
-		// create/place existing marker on the location and center map on it
-		// set the locationUpdate callback as handler for marker's dragend event
-		// return the address from lat long
-		this.getCurrentLocation = function(locationName, locationUpdateCallback) {
+		// get details from place id
+		this.getDetailsFromPlaceId = function(placeId) {
+			console.log("[getDetailsFromPlaceId]: Fetching place details from id: " + placeId);
 			var deferred = $q.defer();
+			that.placeService.getDetails({
+				placeId: placeId
+			}, function(place, status){
+				if (status != google.maps.places.PlacesServiceStatus.OK) {
+			    deferred.reject(status);
+			  }
+			  deferred.resolve(convertGeocodeResultToLocalResult(place));
+			});
+			return deferred.promise;
+		};
 
-			// if the browser supports geolocation
+		// center map on current location
+		this.centerMapOnCurrentLocation = function() {
+			console.log("[centerMapOnCurrentLocation]: centering map on current location")
+			fetchCurrentLocation()
+				.then(function(latLng){
+					console.log("[centerMapOnCurrentLocation]: Successfully fetched current location");
+					console.log(latLng)
+					that.map.setCenter(latLng);
+				}, function(status){
+					console.log("[centerMapOnCurrentLocation]: Failed to center map - " + status);
+				});
+		};
+
+		// get current location
+		function fetchCurrentLocation() {
+			console.log("[fetchCurrentLocation]: Fetching current location");
+			var deferred = $q.defer();
 			if(navigator.geolocation) {
-
-				// get the user location in lat long
 		    navigator.geolocation.getCurrentPosition(function(position) {
-		      latLng = new google.maps.LatLng(position.coords.latitude,position.coords.longitude);
-
-		      // get address from lat long
-		      getAddressFromLatLng(latLng)
-		      .then(function(result){
-
-		      	var address = result.formatted_address;
-		      	
-		      	console.log(address);
-
-		      	// center the map
-		      	that.map.setCenter(latLng);
-
-		      	// send fetched address to caller
-		      	deferred.resolve(result);
-
-		      	// place a marker on location
-		      	var marker = {};
-		      	if(that.markers[locationName]) {
-		      		marker = that.markers[locationName];
-		      		marker.setPosition(latLng);
-		      	} else {
-							marker = new google.maps.Marker({
-						    position: latLng,
-						    map: that.map,
-						    title: locationName,
-						    draggable: true,
-								animation: google.maps.Animation.DROP,
-								label: locationName
-						  });
-						  // register callback for marker's dragend event
-						  google.maps.event.addListener(marker, 'dragend', function(event){
-						    console.log(event.latLng);
-						    getAddressFromLatLng(event.latLng)
-						    .then(function(result){
-						    	tryDrawRoute();
-						    	locationUpdateCallback({status: true, result: result});
-						    }, function(reason){
-						    	locationUpdateCallback({status: false});
-						    })
-							});
-						  that.markers[locationName] = marker;
-		      	}
-					  marker.setMap(that.map);
-					  tryDrawRoute();
-
-		      }, function(reason){
-		      	// failed to reverse geocode
-						console.log(reason);
-						deferred.reject(reason);
-		      });
-
+		      currentLocationLatLng = new google.maps.LatLng(position.coords.latitude, position.coords.longitude);
+		      deferred.resolve(currentLocationLatLng);
 		    }, function() {
-		    	// failed to get user's current location
 		    	deferred.reject("Failed to get current location");
 		    });
 		  }
 		  else {
-		  	// browser doesn't support fetching user's location
 		    deferred.reject("Browser doesn't support fetching the current location");
 		  }
-
 		  return deferred.promise;
 		};
 
-
-		// intiialize
-		(function() {
-
-			// init the map
-			that.map = new google.maps.Map(document.getElementById('map-canvas'), {
-				center: new google.maps.LatLng(28.6100, 77.2300),
-		    zoom: 12
-			});
-			that.geocoder = new google.maps.Geocoder;
-			that.directionsService = new google.maps.DirectionsService();
-			that.directionsDisplay = new google.maps.DirectionsRenderer({
-				markerOptions: {
-					visible: false
-				}
-			});
-			that.directionsDisplay.setMap(that.map);
-		})();
-
-
-
+		that.centerMapOnCurrentLocation();
 
 	}]);
 

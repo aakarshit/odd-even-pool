@@ -1,5 +1,7 @@
-function MapResult () {
+function MapResult (locationName) {
 	
+	this.locationName = locationName;
+
 	this.formatted_address = "";
 
 	this.country = "";
