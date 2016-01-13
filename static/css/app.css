@@ -1,10 +1,18 @@
 #newUser {
 	z-index: 2;
 	max-width: 400px;
-	
+}
+
+#footer {
+	z-index: 2;
+	background-color: white;
 }
 
 body {
+	height: 100%;
+}
+
+#main-content {
 	height: 100%;
 }
 
@@ -12,11 +20,16 @@ body {
 	max-height: 80vh;
 }
 
+#map-wrapper {
+	width: 100%;
+	height: 100%;
+	top: 0;
+	left: 0;
+	position: fixed;
+	z-index: 1;
+}
+
 #map-canvas {
 	height: 100%;
 	width: 100%;
-	position: absolute;
-	top: 0;
-	left: 0;
-	max-width: inherit;
 }

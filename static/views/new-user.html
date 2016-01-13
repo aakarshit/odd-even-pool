@@ -6,7 +6,7 @@
 
 	    	<!-- Title -->
 	    	<h2>
-		    	<span>OddEvenPool.com</span>
+		    	<span>OddEvenPool</span>
 		    </h2>
 		    <md-button class="md-raised md-warn">Beta</md-button>
 
@@ -51,15 +51,6 @@
 						<label>Email address or mobile number</label>
 						<input ng-model="NewUserController.user.mobileOrEmail" type="text" required />
 					</md-input-container>
-				</div>
-
-				<!-- Car Number Type -->
-				<div layout="column">
-					<p>My car number is</p>
-					<md-radio-group ng-model="NewUserController.user.carNumberType">
-						<md-radio-button value="even" class="md-primary">Even</md-radio-button>
-						<md-radio-button value="odd">Odd</md-radio-button>
-					</md-radio-group>
 				</div>
 
 				<!-- Home Address -->
@@ -120,6 +111,15 @@
 	          <md-icon md-svg-icon="static/icons/ic_pin_drop_black_24px.svg">
 	        	</md-icon>
 	        </md-button> -->
+				</div>
+
+				<!-- Car Number Type -->
+				<div layout="column">
+					<p>My car number is</p>
+					<md-radio-group ng-model="NewUserController.user.carNumberType">
+						<md-radio-button value="even" class="md-primary">Even</md-radio-button>
+						<md-radio-button value="odd">Odd</md-radio-button>
+					</md-radio-group>
 				</div>
 
 				<!-- Shift start time -->

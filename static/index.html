@@ -3,12 +3,12 @@
 	<head>
 		<title>Odd Even Pool</title>
 		<meta name="viewport" content="width=device-width, initial-scale=1">
-		<link rel="stylesheet" href="https://ajax.googleapis.com/ajax/libs/angular_material/1.0.0-rc5/angular-material.min.css">
+		<link rel="stylesheet" href="https://ajax.googleapis.com/ajax/libs/angular_material/1.0.0-rc7/angular-material.min.css">
 		<link rel="stylesheet" href="static/css/app.css" >
 		<link rel="icon"href="static/icons/favicon.ico">
 	</head>
 
-	<body layout layout-align="start start" layout-padding>
+	<body>
 		<!-- Google Analytics -->
 		<script>
 		  (function(i,s,o,g,r,a,m){i['GoogleAnalyticsObject']=r;i[r]=i[r]||function(){
@@ -21,10 +21,27 @@
 
 		</script>
 		<!-- End Google Analytics -->
-		
+		<div id="map-wrapper">
+			<div id="map-canvas"></div>
+		</div>
 
-		<div new-user id="newUser" layout layout-align="center center"></div>
-		<div id="map-canvas"></div>
+		<div id="main-content" layout="column" layout-align="space-between">
+			<div layout layout-align="start start" layout-padding>
+				<div new-user id="newUser" layout layout-align="center center"></div>
+			</div>
+			<span flex></span>
+			<div layout="column" layout-align="end stretch">
+				<div layout-gt-xs="row" layout-xs="column" layout-padding id="footer">
+					<div flex>Terms of Use</div>
+					<div flex>Privacy Policy</div>
+					<div flex>Contact Us</div>
+				</div>
+			</div>
+		</div>
+
+
+
+		
 		
 		<script src="static/js/jquery-2.1.4.min.js"></script>
 		<script src="https://ajax.googleapis.com/ajax/libs/angularjs/1.4.8/angular.min.js"></script>
